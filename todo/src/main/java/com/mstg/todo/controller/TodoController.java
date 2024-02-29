@@ -4,15 +4,15 @@ import com.mstg.todo.dto.HelloDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/*
+    @PostMapping
+    @DeleteMapping
+    @PutMapping
+    @PatchMapping
+ */
 @RestController
 @RequestMapping("/api/todo/")
 public class TodoController {
-    /*
-        @PostMapping
-        @DeleteMapping
-        @PutMapping
-        @PatchMapping
-     */
     @GetMapping("hello")
     public ResponseEntity<HelloDto> hello(@RequestParam String name) {
         if (!name.isEmpty())
