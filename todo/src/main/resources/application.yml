@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: todo-app-mstg
+
+server:
+  port: 8098
+
+
