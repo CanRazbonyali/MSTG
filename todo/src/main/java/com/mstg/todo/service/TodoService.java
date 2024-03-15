@@ -5,7 +5,7 @@ import com.mstg.todo.dto.TodoDto;
 import java.util.List;
 
 public interface TodoService {
-    List<TodoDto>  getAllTodos();
+    List<TodoDto> getAlTodos();
     TodoDto getTodo(String title);
     boolean saveTodo(TodoDto obj);
     boolean updateTodo(TodoDto obj);
