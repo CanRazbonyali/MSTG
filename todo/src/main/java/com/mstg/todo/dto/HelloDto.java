@@ -4,9 +4,9 @@ import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class HelloDto {
     private String message;
 }

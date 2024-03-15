@@ -1,13 +1,11 @@
 package com.mstg.todo.controller;
 
-import com.mstg.todo.dto.HelloDto;
 import com.mstg.todo.dto.TodoDto;
 import com.mstg.todo.service.impl.TodoService_Impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,38 +13,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TodoController {
     private final TodoService_Impl _todoService;
-    @GetMapping("hello")
-    public ResponseEntity<HelloDto> hello(@RequestParam String name) {
-        if (!name.isEmpty())
-//            return "Hello " + name +  " from server.";
-//            return ResponseEntity.status(200).body("Hello " + name +  " from server.");
-            return ResponseEntity.status(200).body(HelloDto.builder()
-                    .message("Hello " + name +  " from server.")
-                    .build());
 
-//        return "Hello noname";
-        return ResponseEntity.status(400).body(HelloDto.builder()
-                .message("Name required.")
-                .build());
-    }
     @GetMapping("all")
     public ResponseEntity<List<TodoDto>> getAllTodos() {
+        /*
         List<TodoDto> todoList = new ArrayList<>();
 
         TodoDto todo1 = TodoDto.builder()
-                .title("Masanı topla.")
-                .detail("Kalemliğin yerini oynatmadan.")
+                .title("Masanı Topla.")
+                .detail("Masanı toplamak için 5 dakikanı ayır.")
                 .build();
 
-        TodoDto todo2 = new TodoDto("Çamaşırları topla", "Çorapları ayrı topla");
-
+         */
+        /*
+        TodoDto todo2 = new TodoDto("Çamaşırları Yıka", "Çamaşırları yıkamak için 1 saat ayır.");
         TodoDto todo3 = new TodoDto();
-        todo3.setTitle("WebRTC araştır.");
-        todo3.setDetail("Çok kendini kaybemeden yap.");
 
-        todoList.add(todo1);
-        todoList.add(todo2);
-        todoList.add(todo3);
+        todo3.setTitle("Yemek Yap");
+        todo3.setDetail("Yemek yapmak için 1 saat ayır.");
+        */
+
+        // todoList.add(todo1);
+        //todoList.add(todo2);
+        //todoList.add(todo3);
+
+        List<TodoDto> todoList = _todoService.getAlTodos();
 
         return ResponseEntity.status(200).body(todoList);
     }
@@ -56,12 +47,33 @@ public class TodoController {
         boolean result = _todoService.saveTodo(dtoObj);
 
         if (result)
-            return ResponseEntity.status(201).body(dtoObj);
-
-        return ResponseEntity.status(500).body(new TodoDto());
+            return ResponseEntity.status(201).body(TodoDto.builder()
+                    .message("Todo added successfully.")
+                    .build());
+        return ResponseEntity.status(400).body(TodoDto.builder()
+                .message("Todo could not be added.")
+                .build());
     }
 
-    /**
-     * TODO: düzenleme
-     * */
+    @GetMapping("get")
+    public ResponseEntity<TodoDto> getTodo(@RequestParam String title) {
+        TodoDto todo = _todoService.getTodo(title);
+
+        if (todo != null)
+            return ResponseEntity.status(200).body(todo);
+        return ResponseEntity.status(404).body(new TodoDto());
+    }
+
+    @PutMapping("update")
+    public ResponseEntity<TodoDto> update(@RequestBody TodoDto dtoObj) {
+        boolean result = _todoService.updateTodo(dtoObj);
+
+        if (result)
+            return ResponseEntity.status(200).body(TodoDto.builder()
+                    .message("Todo updated successfully.")
+                    .build());
+        return ResponseEntity.status(400).body(TodoDto.builder()
+                .message("Todo could not be updated.")
+                .build());
+    }
 }
