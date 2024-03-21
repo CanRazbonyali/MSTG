@@ -21,4 +21,13 @@ public class Todo {
 
     @Column(name = "DETAIL")
     private String detail;
+
+    @Column(name = "COMPLETED")
+    private boolean completed;
+
+//    public Todo(String title, String detail) {
+//        this.title = title;
+//        this.detail = detail;
+//        this.completed = false;
+//    }
 }

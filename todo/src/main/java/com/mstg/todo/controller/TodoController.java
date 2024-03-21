@@ -2,8 +2,12 @@ package com.mstg.todo.controller;
 
 import com.mstg.todo.dto.HelloDto;
 import com.mstg.todo.dto.TodoDto;
+import com.mstg.todo.model.Todo;
 import com.mstg.todo.service.impl.TodoService_Impl;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,54 +18,46 @@ import java.util.List;
 @RequestMapping("/api/todo/")
 @RequiredArgsConstructor
 public class TodoController {
-    private final TodoService_Impl _todoService;
-    @GetMapping("hello")
-    public ResponseEntity<HelloDto> hello(@RequestParam String name) {
-        if (!name.isEmpty())
-//            return "Hello " + name +  " from server.";
-//            return ResponseEntity.status(200).body("Hello " + name +  " from server.");
-            return ResponseEntity.status(200).body(HelloDto.builder()
-                    .message("Hello " + name +  " from server.")
-                    .build());
+    private final Logger _logger = LoggerFactory.getLogger(TodoController.class);
 
-//        return "Hello noname";
-        return ResponseEntity.status(400).body(HelloDto.builder()
-                .message("Name required.")
-                .build());
-    }
+    private final TodoService_Impl _todoService;
     @GetMapping("all")
     public ResponseEntity<List<TodoDto>> getAllTodos() {
-        List<TodoDto> todoList = new ArrayList<>();
+        try {
+            List<TodoDto> allTodos = _todoService.getAllTodos();
 
-        TodoDto todo1 = TodoDto.builder()
-                .title("Masanı topla.")
-                .detail("Kalemliğin yerini oynatmadan.")
-                .build();
-
-        TodoDto todo2 = new TodoDto("Çamaşırları topla", "Çorapları ayrı topla");
-
-        TodoDto todo3 = new TodoDto();
-        todo3.setTitle("WebRTC araştır.");
-        todo3.setDetail("Çok kendini kaybemeden yap.");
-
-        todoList.add(todo1);
-        todoList.add(todo2);
-        todoList.add(todo3);
-
-        return ResponseEntity.status(200).body(todoList);
+            _logger.info("All todos were fetched...");
+            return ResponseEntity.status(200).body(allTodos);
+        } catch (Exception ex) {
+            _logger.error("Internal server error...");
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @PostMapping("add")
     public ResponseEntity<TodoDto> addTodo(@RequestBody TodoDto dtoObj) {
         boolean result = _todoService.saveTodo(dtoObj);
 
-        if (result)
+        if (result) {
+            _logger.info("Saved successfully...");
             return ResponseEntity.status(201).body(dtoObj);
+        }
 
+        _logger.error("Internal server error...");
         return ResponseEntity.status(500).body(new TodoDto());
     }
 
-    /**
-     * TODO: düzenleme
-     * */
+    @PutMapping("update")
+    public ResponseEntity<TodoDto> updateTodo(@RequestBody TodoDto dtoObj) {
+
+        boolean result = _todoService.updateTodo(dtoObj);
+
+        if (result) {
+            _logger.info("Updated successfully...");
+            return ResponseEntity.status(200).body(dtoObj);
+        }
+
+        _logger.error("Internal server error...");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dtoObj);
+    }
 }
