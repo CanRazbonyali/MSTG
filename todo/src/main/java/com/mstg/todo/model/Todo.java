@@ -16,7 +16,7 @@ public class Todo {
     @Column(name = "ID")
     private long id;
 
-    @Column(name = "TITLE")
+    @Column(name = "TITLE", unique = true)
     private String title;
 
     @Column(name = "DETAIL")

@@ -1,5 +1,7 @@
 package com.mstg.todo.controller;
 
+import com.mstg.todo.dto.BaseResponseDto;
+import com.mstg.todo.dto.ExceptionDto;
 import com.mstg.todo.dto.HelloDto;
 import com.mstg.todo.dto.TodoDto;
 import com.mstg.todo.model.Todo;
@@ -7,6 +9,7 @@ import com.mstg.todo.service.impl.TodoService_Impl;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,16 +38,18 @@ public class TodoController {
     }
 
     @PostMapping("add")
-    public ResponseEntity<TodoDto> addTodo(@RequestBody TodoDto dtoObj) {
-        boolean result = _todoService.saveTodo(dtoObj);
-
-        if (result) {
+    public ResponseEntity<BaseResponseDto> addTodo(@RequestBody TodoDto dtoObj) {
+        try {
+            boolean result = _todoService.saveTodo(dtoObj);
             _logger.info("Saved successfully...");
             return ResponseEntity.status(201).body(dtoObj);
+        } catch (DataIntegrityViolationException ex) {
+            _logger.error(ex.getMessage());
+            return ResponseEntity.status(400).body(ExceptionDto.builder().message(ex.getMessage()).build());
+        } catch (Exception ex) {
+            _logger.error("Internal server error.Ex:\n{}", ex.getMessage());
+            return ResponseEntity.status(500).body(ExceptionDto.builder().message(ex.getMessage()).build());
         }
-
-        _logger.error("Internal server error...");
-        return ResponseEntity.status(500).body(new TodoDto());
     }
 
     @PutMapping("update")

@@ -7,6 +7,7 @@ import com.mstg.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -23,7 +24,6 @@ public class TodoService_Impl implements TodoService {
     public List<TodoDto> getAllTodos() {
         try {
             List<Todo> dbTodos = _todoRepository.findAll();
-
 
             if (!dbTodos.isEmpty()) {
                 _logger.info("All Todos fethched...");
@@ -75,17 +75,30 @@ public class TodoService_Impl implements TodoService {
     @Override
     public boolean saveTodo(TodoDto obj) {
         try {
+
+//            Optional<Todo> dbTodo = _todoRepository.findByTitle(obj.getTitle());
+//
+//            if (!dbTodo.isEmpty()) {
+//                throw new RuntimeException("Todo already exists.");
+//            }
+
             Todo newTodo = Todo.builder()
                     .title(obj.getTitle())
                     .detail(obj.getDetail())
+                    .completed(false)
                     .build();
 
             Todo savedEntity = _todoRepository.save(newTodo);
             _logger.info("{} saved successfully...", savedEntity);
             return true;
+        } catch (DataIntegrityViolationException ex) {
+            _logger.info("Error occurred while saving entity.Ex: {}", ex.getMessage());
+            throw new DataIntegrityViolationException(ex.getMessage());
+//            return false;
         } catch (Exception ex) {
             _logger.info("Error occurred while saving entity.Ex: {}", ex.getMessage());
-            return false;
+            throw new RuntimeException(ex.getMessage());
+//            return false;
         }
     }
 
@@ -96,6 +109,7 @@ public class TodoService_Impl implements TodoService {
 
             if (dbTodo != null) {
                 dbTodo.setDetail(obj.getDetail());
+                dbTodo.setCompleted(obj.isCompleted());
                 Todo updatedEntity = _todoRepository.save(dbTodo);
 
                 _logger.info("{} updated successfully...", obj);
