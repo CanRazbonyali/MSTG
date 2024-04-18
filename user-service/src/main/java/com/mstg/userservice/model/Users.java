@@ -1,16 +1,14 @@
 package com.mstg.userservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "users")
 public class Users {
     @Id
@@ -29,4 +27,7 @@ public class Users {
 
     @Column(name = "PASSWORD")
     private String password;
+
+    @OneToOne
+    private Users_Details detail;
 }

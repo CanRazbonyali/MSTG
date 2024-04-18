@@ -1,16 +1,14 @@
 package com.mstg.userservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "users_details")
 public class Users_Details {
     @Id
@@ -25,5 +23,8 @@ public class Users_Details {
     private String gender;
 
     @Column(name = "AGE")
-    private String age;
+    private int age;
+
+    @OneToOne
+    private Users user;
 }
