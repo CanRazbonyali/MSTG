@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5400:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=TODO-DB
+    restart: always
+
+  todo-service:
+    container_name: todo_cnt
+    image: img-todo
+    build: ./
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8098"
+    environment:
+      - DB_USER=user
+      - DB_PASSWORD=123
+      - DATASOURCE-URL=jdbc:postgresql://postgres/TODO-DB
+
+
+
