@@ -17,7 +17,7 @@ services:
     image: img-todo
     build: ./
     depends_on:
-      - postgres
+      - postgres,
     ports:
       - "8080:8098"
     environment:

@@ -1,7 +1,8 @@
 FROM openjdk:21
+
 WORKDIR /todo
 
-COPY build/libs/todo-0.0.1 ./todoApp.jar
+COPY build/libs/todo-0.0.1.jar ./todoApp.jar
 
 EXPOSE 8098
 
